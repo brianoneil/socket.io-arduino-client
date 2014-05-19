@@ -43,6 +43,7 @@ class SocketIOClient {
 		void monitor();
 		void setDataArrivedDelegate(DataArrivedDelegate dataArrivedDelegate);
 		void send(char *data);
+		void sendEvent(char *event, char *data); //added
 	private:
         void sendHandshake(char hostname[]);
         EthernetClient client;

@@ -219,3 +219,14 @@ void SocketIOClient::send(char *data) {
 	client.print(data);
 	client.print((char)255);
 }
+
+//https://github.com/LearnBoost/socket.io-spec
+void sendEvent::sendEvent(char *event, char *data){
+	client.print((char)0);
+	client.print("5:::{\"name\":\"");
+	client.print(event);
+	client.print("\",\"args\":[\"");
+	client.print(data);
+	client.print("\"]}");
+	client.print((char)255);	
+}

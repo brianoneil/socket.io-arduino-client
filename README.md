@@ -1,10 +1,13 @@
-# SocketIO Arduino Client, an Arduino client for connecting and messaging with Socket.io servers
+# SocketIO Arduino Client, an Arduino client for connecting and messaging with Socket.io servers (Now with socket.io events)
 
-Based on Kevin Rohling's arduino websocket client modified to work with socket.io servers.  Along the way, all uses of the String class were replaced with fixed char buffers so as to use less memory.
+Based on Bill Roy's socket.io-arduino-client (which is based on Kevin Rohling's arduino websocket client) modified to hanlde socket.io events. New methods have been added, a modified version of HashMap by Alexander Brevig has also ben added.
 
+The events.ino example shows how to use the new features on the arduino. A NodeJS example is included for testing.
+
+Bill's and Kevin's documentation is reproduced hereinafter, with changes as needed.
+
+Along the way, all uses of the String class were replaced with fixed char buffers so as to use less memory.
 The bitlashsocketio.ino example provides an integration with Bitlash on the Arduino and a node.js example server that can be used to send Bitlash commands over the Websocket fabric to the Arduino, and see its output in reply.
-
-Kevin's documentation is reproduced hereinafter, with changes as needed.
 
 
 ## Caveats

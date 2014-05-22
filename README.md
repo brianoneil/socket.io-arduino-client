@@ -18,27 +18,48 @@ Clone this repo into your Arduino Sketchbook directory under libraries, then res
 ## How To Use This Library
 
 ```
+SocketIOClient client;
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char server[] = "echo.websocket.org";
-WebSocketClient client;
+char hostname[] = "148.XXX.XX.XX";
+int port = 3000;
+
+// Socket.io "hello" EVENT handler
+void hello(EthernetClient ethclient, char *data ){
+    Serial.print("[hello] event hapenning:\t");
+    Serial.println(data);
+    client.sendEvent( "goodbye", "Client here, goodbye!" );
+}
+
+// Socket.io "goodbye" EVENT handler
+void goodbye(EthernetClient ethclient, char *data ){
+    Serial.print("[goodbye] event hapenning:\t");
+    Serial.println(data);
+    Serial.println("That is all.");
+}
 
 void setup() {
-  Serial.begin(9600);
-  Ethernet.begin(mac);
-  client.connect(server);
-  client.setDataArrivedDelegate(dataArrived);
-  client.send("Hello World!");
+	Serial.begin(9600);
+	Ethernet.begin(mac);
+    client.init(5);
+       
+    if (!client.connect(hostname, port)) 
+        Serial.println(F("Not connected."));
+
+    //Event hanlders
+    client.setEventHandler("hello",   hello);
+    client.setEventHandler("goodbye", goodbye);
+
+    //say hello to server
+	if (client.connected())
+        client.sendEvent("hello","Client here, hello!");
 }
 
 void loop() {
   client.monitor();
 }
 
-void dataArrived(WebSocketClient client, char *data) {
-  Serial.println("Data Arrived: " + data);
-}
 ```
 
 ## Examples
 
-There example included with this library, EchoExample, will connect to echo.websocket.org, which hosts a service that simply echos any messages that you send it via Websocket.  This example sends the message "Hello World!".  If the example runs correctly, the Arduino will receive this same message back over the Websocket and print it via Serial.println.
+There are some examples: EventsExample will show you how to use events, and EchoExample, will connect to echo.websocket.org, which hosts a service that simply echos any messages that you send it via Websocket.  This example sends the message "Hello World!".  If the example runs correctly, the Arduino will receive this same message back over the Websocket and print it via Serial.println.

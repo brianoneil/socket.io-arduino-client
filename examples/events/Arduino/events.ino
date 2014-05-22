@@ -3,10 +3,8 @@
 #include "SocketIOClient.h"
 
 SocketIOClient client;
-
-
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char hostname[] = "148.228.24.25";
+char hostname[] = "148.XXX.XX.XX";
 int port = 3000;
 
 // websocket message handler: do something with MESSAGE from server
@@ -35,9 +33,7 @@ void setup() {
 	Ethernet.begin(mac);
     client.init(5);
         
-        
-        //Conectar con servidor        
-	if (!client.connect(hostname, port)) 
+    if (!client.connect(hostname, port)) 
         Serial.println(F("Not connected."));
 
     //MESSAGE hanlder

@@ -28,6 +28,13 @@
 */
 #include <SocketIOClient.h>
 
+HashType <char*,void (*)( EthernetClient client, char *data )> SocketIOClient::hashRawArray[HASH_SIZE];
+HashMap  <char*, void(*)( EthernetClient client, char *data )> SocketIOClient::eventHandlers = HashMap<char*,void(*)( EthernetClient client, char *data )>( hashRawArray , HASH_SIZE );	//added
+
+void SocketIOClient::init(int max_events){
+	eventc = 0;	
+}
+
 bool SocketIOClient::connect(char thehostname[], int theport) {
 	if (!client.connect(thehostname, theport)) return false;
 	hostname = thehostname;
@@ -70,6 +77,8 @@ void SocketIOClient::monitor() {
 	if (!client.available()) return;
 
 	char which;
+	char *evtnm;
+
 	while (client.available()) {
 		readLine();
 		dataptr = databuffer;
@@ -85,7 +94,15 @@ void SocketIOClient::monitor() {
 			client.print((char)255);
 			continue;
 
-		case '5':		// event: [5:::{"name":"ls"}]
+		case '5':		// event: [5:::{"name":"ls"}]			
+			//event handler pointer
+			void (*evhand)(EthernetClient client, char *data );
+			//Get event name
+			evtnm = getName(databuffer);			
+			if( eventHandlers.getFunction( evtnm , &evhand) ){
+				evhand(client, databuffer);
+			}
+			//uhm...
 			which = 4;
 			break;
 
@@ -98,7 +115,7 @@ void SocketIOClient::monitor() {
 		findColon(which);
 		dataptr += 2;
 
-		// handle backslash-delimited escapes
+		// handle backslash-delimited escapes		
 		char *optr = databuffer;
 		while (*dataptr && (*dataptr != '"')) {
 			if (*dataptr == '\\') {
@@ -108,10 +125,6 @@ void SocketIOClient::monitor() {
 		}
 		*optr = 0;
 
-		Serial.print("[");
-		Serial.print(databuffer);
-		Serial.print("]");
-
 		if (dataArrivedDelegate != NULL) {
 			dataArrivedDelegate(*this, databuffer);
 		}
@@ -119,7 +132,7 @@ void SocketIOClient::monitor() {
 }
 
 void SocketIOClient::setDataArrivedDelegate(DataArrivedDelegate newdataArrivedDelegate) {
-	  dataArrivedDelegate = newdataArrivedDelegate;
+	dataArrivedDelegate = newdataArrivedDelegate;
 }
 
 void SocketIOClient::sendHandshake(char hostname[]) {
@@ -203,7 +216,6 @@ void SocketIOClient::readLine() {
 	dataptr = databuffer;
 	while (client.available() && (dataptr < &databuffer[DATA_BUFFER_LEN-2])) {
 		char c = client.read();
-		//Serial.print(c);
 		if (c == 0) Serial.print(F("NULL"));
 		else if (c == 255) Serial.print(F("0x255"));
 		else if (c == '\r') {;}
@@ -221,7 +233,7 @@ void SocketIOClient::send(char *data) {
 }
 
 //https://github.com/LearnBoost/socket.io-spec
-void sendEvent::sendEvent(char *event, char *data){
+void SocketIOClient::sendEvent(char *event, char *data){
 	client.print((char)0);
 	client.print("5:::{\"name\":\"");
 	client.print(event);
@@ -229,4 +241,36 @@ void sendEvent::sendEvent(char *event, char *data){
 	client.print(data);
 	client.print("\"]}");
 	client.print((char)255);	
+}
+
+
+void SocketIOClient::setEventHandler(char* eventName,  void (*handler)(EthernetClient client, char *data )){
+	if( eventc < HASH_SIZE)	eventHandlers[eventc++](eventName,handler);
+	else	Serial.println('MAX NUMBER OF EVENTS REACHED');
+}
+
+//		json encoded event
+//		5:::{"name":"event_name","args":[]}
+char* SocketIOClient::getName(char* databuffer){
+
+	char *nm = databuffer;
+	char *longname;
+
+	int quotes = 0;
+	int beg = 0;
+	int end = 0;
+
+	while( *nm && quotes <  3){ 
+		if( *nm  == '"' ) quotes++;
+		beg++; nm++; 
+	}	
+	longname = nm;
+	end = beg;
+	while( *nm && (*nm  != '"') ){ end++; nm++; }
+
+	char* name = new char[end - beg + 1];
+	strncpy(name, longname, end - beg);
+	name[end - beg] = '\0';
+
+	return name;
 }

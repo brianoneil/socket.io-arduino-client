@@ -1,20 +1,20 @@
-# SocketIO Arduino Client, an Arduino client for connecting and messaging with Socket.io servers (Now with socket.io events)
+# Socket.IO Arduino Client
+### An Arduino client for connecting and messaging with Socket.io servers
 
-Based on Bill Roy's SocketIO Arduino Client (which is based on Kevin Rohling's arduino websocket client) modified to work with socket.io events. Bill's and Kevin's documentation is reproduced hereinafter, with changes as needed.
+Based on Bill Roy's Arduino Socket.IO Client (which is based on Kevin Rohling's Arduino WebSocket Client) with event handling by @dantaex. Kevin's, Bill's and Dan's documentation is reproduced hereinafter, with changes as needed.
 
 Along the way, all uses of the String class were replaced with fixed char buffers so as to use less memory.
 The bitlashsocketio.ino example provides an integration with Bitlash on the Arduino and a node.js example server that can be used to send Bitlash commands over the Websocket fabric to the Arduino, and see its output in reply.
 
-
 ## Caveats
 
-This library doesn't support every inch of the Websocket spec, most notably the use of a Sec-Websocket-Key.  Also, because Arduino doesn't support SSL, this library also doesn't support the use of Websockets over https.  If you're interested in learning more about the Websocket spec I recommend checking out the [Wikipedia Page](http://en.wikipedia.org/wiki/WebSocket).  Now that I've got that out of the way, I've been able to successfully use this to connect to several hosted Websocket services, including: [echo.websocket.org](http://websocket.org/echo.html) and [pusherapp.com](http://pusherapp.com).
+This library doesn't support every inch of the Websocket specifications, most notably the use of a Sec-Websocket-Key. Also, because Arduino doesn't support SSL, this library also doesn't support the use of Websockets over https. If you're interested in learning more about the Websocket specifications, I recommend checking out the [Wikipedia Page](http://en.wikipedia.org/wiki/WebSocket). Now that I've got that out of the way, I've been able to successfully use this to connect to several hosted Websocket services, including: [echo.websocket.org](http://websocket.org/echo.html) and [pusherapp.com](http://pusherapp.com).
 
 ## Installation instructions
 
-Clone this repo into your Arduino Sketchbook directory under libraries, then restart the Arduino IDE so that it notices the new library.  Now, under File\Examples you should see SocketIOClient.  
+Clone this repo into your Arduino Sketchbook directory under libraries, then restart the Arduino IDE so that it notices the new library.  Now, under File\Examples you should see SocketIOClient.
 
-## How To Use This Library
+## How to use this library
 
 ```
 SocketIOClient client;
@@ -23,38 +23,37 @@ char hostname[] = "148.XXX.XX.XX";
 int port = 3000;
 
 // Socket.io "hello" EVENT handler
-void hello(EthernetClient ethclient, char *data ){
-    Serial.print("[hello] event hapenning:\t");
+void hello(EthernetClient ethclient, char* data) {
+    Serial.print("[hello] event happening: ");
     Serial.println(data);
-    client.sendEvent( "goodbye", "Client here, goodbye!" );
+    client.emit("goodbye", "Arduino here, goodbye!");
 }
 
 // Socket.io "goodbye" EVENT handler
-void goodbye(EthernetClient ethclient, char *data ){
-    Serial.print("[goodbye] event hapenning:\t");
+void goodbye(EthernetClient ethclient, char* data) {
+    Serial.print("[goodbye] event happening: ");
     Serial.println(data);
     Serial.println("That is all.");
 }
 
 void setup() {
-	Serial.begin(9600);
-	Ethernet.begin(mac);
-    client.init(5);
-       
-    if (!client.connect(hostname, port)) 
+    Serial.begin(9600);
+    Ethernet.begin(mac);
+
+    if(!client.connect(hostname, port)) {
         Serial.println(F("Not connected."));
+    }
 
     //Event hanlders
-    client.setEventHandler("hello",   hello);
+    client.setEventHandler("hello", hello);
     client.setEventHandler("goodbye", goodbye);
 
-    //say hello to server
-	if (client.connected())
-        client.sendEvent("hello","Client here, hello!");
+    //Say hello to the server
+    client.emit("hello", "Arduino here, hello!");
 }
 
 void loop() {
-  client.monitor();
+    client.monitor();
 }
 
 ```

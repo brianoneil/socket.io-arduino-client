@@ -139,8 +139,8 @@ void SocketIOClient::sendHandshake(char hostname[], int port) {
 	client.println(F("GET /socket.io/1/ HTTP/1.1"));
 	client.print(F("Host: "));
 	client.print(hostname);
-	client.print(F(":");
-	client.println(F(port));
+	client.print(F(":"));
+	client.println(port);
 	client.println(F("Origin: Arduino\r\n"));
 }
 
@@ -229,7 +229,7 @@ void SocketIOClient::readLine() {
 
 void SocketIOClient::send(char *data) {
 	client.print((char)0);
-	client.print("3:::");
+	client.print("5:::");
 	client.print(data);
 	client.print((char)255);
 }

@@ -1,9 +1,11 @@
 /*
 	socket.io-arduino-client: a Socket.IO client for the Arduino
 
-	Based on the Kevin Rohling WebSocketClient
+	Based on Bill Roy's Arduino Socket.IO Client (which is based on 
+	Kevin Rohling's Arduino WebSocket Client) with event handling by
+	@dantaex
 
-	Copyright 2013 Bill Roy
+	Copyright 2014 Quentin Pigné
 
 	Permission is hereby granted, free of charge, to any person
 	obtaining a copy of this software and associated documentation

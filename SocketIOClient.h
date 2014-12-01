@@ -148,7 +148,7 @@ class SocketIOClient {
 		void setEventHandler(char* eventName,  void (*handler)( EthernetClient client, char *data )); //added
 		void init(int max_events);
 	private:
-        void sendHandshake(char hostname[]);
+        void sendHandshake(char hostname[], int port);
         EthernetClient client;
         DataArrivedDelegate dataArrivedDelegate;
         bool readHandshake();

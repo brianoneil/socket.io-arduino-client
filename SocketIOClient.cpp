@@ -39,7 +39,7 @@ bool SocketIOClient::connect(char thehostname[], int theport) {
 	if (!client.connect(thehostname, theport)) return false;
 	hostname = thehostname;
 	port = theport;
-	sendHandshake(hostname);
+	sendHandshake(hostname, port);
 	return readHandshake();
 }
 
@@ -135,10 +135,12 @@ void SocketIOClient::setDataArrivedDelegate(DataArrivedDelegate newdataArrivedDe
 	dataArrivedDelegate = newdataArrivedDelegate;
 }
 
-void SocketIOClient::sendHandshake(char hostname[]) {
+void SocketIOClient::sendHandshake(char hostname[], int port) {
 	client.println(F("GET /socket.io/1/ HTTP/1.1"));
 	client.print(F("Host: "));
-	client.println(hostname);
+	client.print(hostname);
+	client.print(F(":");
+	client.println(F(port));
 	client.println(F("Origin: Arduino\r\n"));
 }
 

@@ -45,20 +45,23 @@ SocketIOClient::SocketIOClient() {
 	Connection methods
 */
 
-bool SocketIOClient::connect(char* theHostname, int thePort) {
+bool SocketIOClient::connect(char* theHostname, int thePort, char* theResource) {
 	//Ethernet connection as a client, if it fails, socket connection cannot be done
 	if(!client.connect(theHostname, thePort)) return false;
 	hostname = theHostname;
 	port = thePort;
+	resource = theResource;
 	//Send handshake to start the socket connection
-	sendHandshake(hostname, port);
+	sendHandshake();
 	//Read the handshake's response to know if connection succeed
 	return readHandshake();
 }
 
-void SocketIOClient::sendHandshake(char* hostname, int port) {
+void SocketIOClient::sendHandshake() {
 	//Construction of the HTTP request
-	client.println(F("GET /socket.io/1/ HTTP/1.1"));
+	client.print(F("GET "));
+	client.print(resource);
+	client.println(F("1/ HTTP/1.1"));
 	client.print(F("Host: "));
 	client.print(hostname);
 	client.print(F(":"));
@@ -107,7 +110,9 @@ bool SocketIOClient::readHandshake(){
 	Serial.println(F("Reconnected."));
 
 	//Construction of the protocol switching request
-	client.print(F("GET /socket.io/1/websocket/"));
+	client.print(F("GET "));
+	client.print(resource);
+	client.print(F("1/websocket/"));
 	client.print(sid);
 	client.println(F(" HTTP/1.1"));
 	client.print(F("Host: "));

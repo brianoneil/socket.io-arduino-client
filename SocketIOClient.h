@@ -49,7 +49,7 @@ class SocketIOClient {
 	public:
 		SocketIOClient();
 		//Public connection methods
-		bool connect(char hostname[], int port = 80);
+		bool connect(char* hostname, int port = 80, char* resource = "/socket.io/");
 		//Public event handling methods
 		void setEventHandler(char* eventName, void (*handler)(EthernetClient client, char *data));
 		//Public data emitting methods
@@ -62,6 +62,7 @@ class SocketIOClient {
 		EthernetClient client;
 		char* hostname;
 		int port;
+		char* resource;
 		char sid[SID_LEN];
 		//Incoming data reading attributes
 		char databuffer[DATA_BUFFER_LEN];
@@ -72,7 +73,7 @@ class SocketIOClient {
 		static HashMap<char*, void(*)(EthernetClient client, char* data)> eventHandlers;
 
 		//Private connection methods
-		void sendHandshake(char hostname[], int port);
+		void sendHandshake();
 		bool readHandshake();
 		bool waitForInput();
 		//Private incoming data reading methods

@@ -81,13 +81,23 @@ bool SocketIOClient::readHandshake(){
 		return false;
 	}
 
+	//Go to the line [sid:transport:timeout:available_transports]
+	//corresponding to the last line of the response
 	eatHeader(); //Consume the rest of the header
-	readLine();	//Consume first line of response (useless data)
-	readLine();	//Read 2nd line (sid : transport : timeout : available_transports)
+	readLine(); //Read the next line and save it
+	char databuffer_save[DATA_BUFFER_LEN];
+	memcpy(databuffer_save, (const char*) databuffer, DATA_BUFFER_LEN);
+	readLine(); //Read again
+	//Loop until the line isn't empty
+	while(*databuffer != '\0') {
+		memcpy(databuffer_save, (const char*) databuffer, DATA_BUFFER_LEN);
+		readLine();
+	}
+	memcpy(databuffer, (const char*) databuffer_save, DATA_BUFFER_LEN);
 
 	//Get the SID in the response
-	char *iptr = databuffer;
-	char *optr = sid;
+	char* iptr = databuffer;
+	char* optr = sid;
 	while(*iptr && (*iptr != ':') && (optr < &sid[SID_LEN - 2])) *optr++ = *iptr++;
 	*optr = 0;
 

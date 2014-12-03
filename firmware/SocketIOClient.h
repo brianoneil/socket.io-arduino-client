@@ -33,7 +33,10 @@
 #define SocketIOClient_H
 
 
-
+#define ARDUINO_H
+#include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include "HashMap.h"
 
 //Length of static data buffers

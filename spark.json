@@ -1,5 +1,5 @@
 {
-  "name": "spark-socket.io client",
+  "name": "spark-socket.io",
   "author": "Brian O'Neil (based on others work)",
   "license": "MIT",
   "version": "0.0.1",

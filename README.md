@@ -1,4 +1,4 @@
-# Socket.IO Arduino Client
+# Socket.IO SparkCore Client
 ### An Arduino client for connecting and messaging with Socket.io servers
 
 Based on Bill Roy's Arduino Socket.IO Client (which is based on Kevin Rohling's Arduino WebSocket Client) with event handling by @dantaex. Kevin's, Bill's and Dan's documentation is reproduced hereinafter, with changes as needed.
@@ -18,7 +18,7 @@ Clone this repo into your Arduino Sketchbook directory under libraries, then res
 
 ```
 SocketIOClient client;
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+
 char hostname[] = "148.XXX.XX.XX";
 int port = 3000;
 

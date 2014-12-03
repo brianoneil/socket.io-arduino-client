@@ -1,0 +1,7 @@
+{
+  "name": "spark-socket.io client",
+  "author": "Brian O'Neil (based on others work)",
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "A library to connect to a socket.io server"
+}
